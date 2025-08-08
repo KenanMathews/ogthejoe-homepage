@@ -1,0 +1,25 @@
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+
+# Development
+node_modules/
+.cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/

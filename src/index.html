@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Space+Grotesk%3Awght%40400%3B500%3B700"
+    />
+    <title>OgTheJoe - Creative Development Hub</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+        /* Custom animations and effects */
+        .service-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(160, 147, 200, 0.2);
+        }
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-online { background-color: #10b981; }
+        .status-offline { background-color: #ef4444; }
+        .status-checking { background-color: #f59e0b; animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="relative flex size-full min-h-screen flex-col bg-[#151122] dark group/design-root overflow-x-hidden" style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'>
+        <div class="layout-container flex h-full grow flex-col">
+            <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d2447] px-10 py-3">
+                <div class="flex items-center gap-4 text-white">
+                    <div class="size-4">
+                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"
+                                fill="currentColor"
+                            />
+                        </svg>
+                    </div>
+                    <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">OgTheJoe</h2>
+                </div>
+                <div class="flex flex-1 justify-end gap-8">
+                    <div class="flex items-center gap-9">
+                        <a class="text-white text-sm font-medium leading-normal" href="#services">Services</a>
+                        <a class="text-white text-sm font-medium leading-normal" href="https://coolify.ogthejoe.com">Management</a>
+                        <a class="text-white text-sm font-medium leading-normal" href="https://github.com/KenanMathews">GitHub</a>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="px-40 flex flex-1 justify-center py-5">
+                <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+                    <div class="flex flex-wrap justify-between gap-3 p-4">
+                        <p class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">Creative Development Hub</p>
+                    </div>
+                    
+                    <div class="px-4 py-3">
+                        <label class="flex flex-col min-w-40 h-12 w-full">
+                            <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
+                                <div class="text-[#a093c8] flex border-none bg-[#2d2447] items-center justify-center pl-4 rounded-l-xl border-r-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                        <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
+                                    </svg>
+                                </div>
+                                <input
+                                    id="searchInput"
+                                    placeholder="Search services..."
+                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border-none bg-[#2d2447] focus:border-none h-full placeholder:text-[#a093c8] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
+                                />
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <h2 id="services" class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Services</h2>
+                    
+                    <div id="servicesGrid" class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4">
+                        <!-- File Sharing Service -->
+                        <a href="https://copyparty.ogthejoe.com" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer" data-service="file-sharing">
+                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h8a1 1 0 110 2H6a1 1 0 010-2zm0 3h8a1 1 0 110 2H6a1 1 0 010-2zm0 3h4a1 1 0 110 2H6a1 1 0 010-2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-white text-base font-medium leading-normal">
+                                    <span class="status-indicator status-checking" data-service="copyparty"></span>
+                                    File Sharing
+                                </p>
+                                <p class="text-[#a093c8] text-sm font-normal leading-normal">Secure file sharing and storage</p>
+                            </div>
+                        </a>
+
+                        <!-- VN Story Editor Service -->
+                        <a href="https://story-editor.ogthejoe.com" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer" data-service="story-editor">
+                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-white text-base font-medium leading-normal">
+                                    <span class="status-indicator status-checking" data-service="story-editor"></span>
+                                    VN Story Editor
+                                </p>
+                                <p class="text-[#a093c8] text-sm font-normal leading-normal">Create and edit visual novel stories</p>
+                            </div>
+                        </a>
+
+                        <!-- VN Compiler API Service -->
+                        <a href="https://vn-compiler.ogthejoe.com" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer" data-service="vn-compiler">
+                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-white text-base font-medium leading-normal">
+                                    <span class="status-indicator status-checking" data-service="vn-compiler"></span>
+                                    VN Compiler API
+                                </p>
+                                <p class="text-[#a093c8] text-sm font-normal leading-normal">Compile visual novel projects</p>
+                            </div>
+                        </a>
+
+                        <!-- Server Management Service -->
+                        <a href="https://coolify.ogthejoe.com" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer" data-service="coolify">
+                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+                                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-white text-base font-medium leading-normal">
+                                    <span class="status-indicator status-checking" data-service="coolify"></span>
+                                    Server Management
+                                </p>
+                                <p class="text-[#a093c8] text-sm font-normal leading-normal">Docker container management</p>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <p id="lastChecked" class="text-[#a093c8] text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
+                        Checking service status...
+                    </p>
+                </div>
+            </div>
+            
+            <footer class="flex justify-center">
+                <div class="flex max-w-[960px] flex-1 flex-col">
+                    <footer class="flex flex-col gap-6 px-5 py-10 text-center">
+                        <div class="flex flex-wrap items-center justify-center gap-6">
+                            <a class="text-[#a093c8] text-base font-normal leading-normal min-w-40" href="https://github.com/KenanMathews">GitHub Profile</a>
+                        </div>
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <a href="https://github.com/KenanMathews">
+                                <div class="text-[#a093c8]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                        <path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"/>
+                                    </svg>
+                                </div>
+                            </a>
+                        </div>
+                        <p class="text-[#a093c8] text-base font-normal leading-normal">Powered by Raspberry Pi • Self-hosted with ❤️</p>
+                    </footer>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
