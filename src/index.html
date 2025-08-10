@@ -157,14 +157,28 @@
                 <p class="text-[#a093c8] text-sm font-normal leading-normal">Docker container management</p>
             </div>
         </a>
-    </div>
-                    
-                    <p id="lastChecked" class="text-[#a093c8] text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
-                        Checking service status...
-                    </p>
-                </div>
+        <!-- NocoDB Service -->
+        <a href="https://nocodb.ogthejoe.com" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer">
+            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                </svg>
             </div>
-            
+            <div>
+                <p class="text-white text-base font-medium leading-normal">
+                    <span class="status-indicator status-checking" data-service="nocodb"></span>
+                    NocoDB
+                </p>
+                <p class="text-[#a093c8] text-sm font-normal leading-normal">Database management interface</p>
+            </div>
+        </a>
+    </div>
+    <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Quick Links</h2>
+    <div id="quickLinksGrid" class="grid grid-cols-[repeat(auto-fit,minmax(100px,175px))] gap-3 p-4">
+
+            <div class="text-center px-4 pb-3">
+                <p class="text-[#a093c8] text-sm">Quick links are loaded from configuration</p>
+            </div>
             <footer class="flex justify-center">
                 <div class="flex max-w-[960px] flex-1 flex-col">
                     <footer class="flex flex-col gap-6 px-5 py-10 text-center">
@@ -185,6 +199,14 @@
                 </div>
             </footer>
         </div>
+                    
+                    <p id="lastChecked" class="text-[#a093c8] text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
+                        Checking service status...
+                    </p>
+                </div>
+            </div>
+
+        
     </div>
 
     <script src="js/app.js"></script>
