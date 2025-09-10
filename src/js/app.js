@@ -213,6 +213,7 @@ class OgTheJoeHomepage {
             // Simple approach: try to fetch with no-cors mode
             const response = await fetch(service.healthEndpoint, {
                 method: 'HEAD',
+                mode: 'no-cors',
                 signal: controller.signal
             });
             
