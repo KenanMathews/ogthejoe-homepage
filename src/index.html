@@ -3,212 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link
       rel="stylesheet"
       as="style"
       onload="this.rel='stylesheet'"
-      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Space+Grotesk%3Awght%40400%3B500%3B700"
+      href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;700"
     />
-    <title>OgTheJoe - Creative Development Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <title>ogthejoe.com - Your Hub for Online Services</title>
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <style>
-        /* Custom animations and effects */
-        .service-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .service-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(160, 147, 200, 0.2);
-        }
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-        }
-        .status-online { background-color: #10b981; }
-        .status-offline { background-color: #ef4444; }
-        .status-checking { background-color: #f59e0b; animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        #servicesGrid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-            justify-items: center;
-        }
+    <style type="text/tailwindcss">
+      :root {
+        --primary-color: #137fec;
+        --secondary-color: #a093c8;
+      }
+      body {
+        font-family: 'Inter', 'Space Grotesk', sans-serif;
+        background-color: #111418;
+        color: #fff;
+      }
+      .service-card {
+        background-color: #1c2127;
+        border: 1px solid #283039;
+        transition: all 0.3s ease;
+      }
+      .service-card:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 20px rgba(19, 127, 236, 0.2);
+        transform: translateY(-5px);
+      }
+      .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+      }
+      .status-online { background-color: #10b981; }
+      .status-offline { background-color: #ef4444; }
+      .status-checking { background-color: #f59e0b; animation: pulse 2s infinite; }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .gradient-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .hero-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
     </style>
 </head>
 <body>
-    <div class="relative flex size-full min-h-screen flex-col bg-[#151122] dark group/design-root overflow-x-hidden" style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'>
-        <div class="layout-container flex h-full grow flex-col">
-            <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#2d2447] px-10 py-3">
-                <div class="flex items-center gap-4 text-white">
-                    <div class="size-4">
-                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"
-                                fill="currentColor"
-                            />
-                        </svg>
-                    </div>
-                    <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">OgTheJoe</h2>
-                </div>
-                <div class="flex flex-1 justify-end gap-8">
-                    <div class="flex items-center gap-9">
-                        <a class="text-white text-sm font-medium leading-normal" href="#services">Services</a>
-                        <a class="text-white text-sm font-medium leading-normal" href="https://coolify.ogthejoe.com">Management</a>
-                        <a class="text-white text-sm font-medium leading-normal" href="https://github.com/KenanMathews">GitHub</a>
-                    </div>
-                </div>
-            </header>
-            
-            <div class="px-40 flex flex-1 justify-center py-5">
-                <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-                    <div class="flex flex-wrap justify-between gap-3 p-4">
-                        <p class="text-white tracking-light text-[32px] font-bold leading-tight min-w-72">Creative Development Hub</p>
-                    </div>
+    <div class="relative flex size-full min-h-screen flex-col overflow-x-hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#283039] bg-[#111418]/80 px-4 sm:px-6 lg:px-8 py-4 backdrop-blur-sm">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-[var(--primary-color)] text-3xl">hub</span>
+                <h2 class="text-xl font-bold tracking-tight">ogthejoe.com</h2>
+            </div>
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-300">
+                <a class="hover:text-white transition-colors" href="#services">Services</a>
+                <a class="hover:text-white transition-colors" href="#details">Details</a>
+                <a class="hover:text-white transition-colors" href="#links">Links</a>
+                <a class="hover:text-white transition-colors" href="https://coolify.ogthejoe.com">Management</a>
+                <a class="hover:text-white transition-colors" href="#contact">Contact</a>
+            </nav>
+            <div class="flex items-center gap-2">
+                <button class="flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-transparent text-gray-400 hover:bg-[#283039] hover:text-white transition-colors">
+                    <span class="material-symbols-outlined text-xl">search</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-grow px-4 sm:px-6 lg:px-8 py-16">
+            <div class="max-w-7xl mx-auto">
+                <!-- Hero Section -->
+                <section class="text-center mb-16">
+                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tighter mb-4 hero-gradient">
+                        Creative Development Hub
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
+                        Explore our suite of services designed to enhance your digital experience. Real-time status monitoring and secure, self-hosted solutions.
+                    </p>
                     
-                    <div class="px-4 py-3">
-                        <label class="flex flex-col min-w-40 h-12 w-full">
-                            <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
-                                <div class="text-[#a093c8] flex border-none bg-[#2d2447] items-center justify-center pl-4 rounded-l-xl border-r-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                                        <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
-                                    </svg>
-                                </div>
-                                <input
-                                    id="searchInput"
-                                    placeholder="Search services..."
-                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border-none bg-[#2d2447] focus:border-none h-full placeholder:text-[#a093c8] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                                />
+                    <!-- Search Bar -->
+                    <div class="max-w-md mx-auto mb-8">
+                        <div class="flex w-full items-stretch rounded-xl h-12">
+                            <div class="text-[#a093c8] flex border-none bg-[#2d2447] items-center justify-center pl-4 rounded-l-xl">
+                                <span class="material-symbols-outlined text-xl">search</span>
                             </div>
-                        </label>
+                            <input
+                                id="searchInput"
+                                placeholder="Search services..."
+                                class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border-none bg-[#2d2447] focus:border-none h-full placeholder:text-[#a093c8] px-4 rounded-l-none text-base font-normal"
+                            />
+                        </div>
                     </div>
-                    
-                    <h2 id="services" class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Services</h2>
-                    
-                    <div id="servicesGrid" class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4">
-        <!-- File Sharing Service -->
-        <a href="https://copyparty.ogthejoe.com" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer">
-            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 2h8a1 1 0 110 2H6a1 1 0 010-2zm0 3h8a1 1 0 110 2H6a1 1 0 010-2zm0 3h4a1 1 0 110 2H6a1 1 0 010-2z"/>
-                </svg>
-            </div>
-            <div>
-                <p class="text-white text-base font-medium leading-normal">
-                    <span class="status-indicator status-checking" data-service="copyparty"></span>
-                    File Sharing
-                </p>
-                <p class="text-[#a093c8] text-sm font-normal leading-normal">Secure file sharing and storage</p>
-            </div>
-        </a>
+                </section>
 
-        <!-- VN Story Editor Service -->
-        <a href="https://story-editor.ogthejoe.com" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer">
-            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
-                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                </svg>
-            </div>
-            <div>
-                <p class="text-white text-base font-medium leading-normal">
-                    <span class="status-indicator status-checking" data-service="story-editor"></span>
-                    VN Story Editor
-                </p>
-                <p class="text-[#a093c8] text-sm font-normal leading-normal">Create and edit visual novel stories</p>
-            </div>
-        </a>
-
-        <!-- VN Compiler API Service -->
-        <a href="https://vn-compiler.ogthejoe.com" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer">
-            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
-                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
-                </svg>
-            </div>
-            <div>
-                <p class="text-white text-base font-medium leading-normal">
-                    <span class="status-indicator status-checking" data-service="vn-compiler"></span>
-                    VN Compiler API
-                </p>
-                <p class="text-[#a093c8] text-sm font-normal leading-normal">Compile visual novel projects</p>
-            </div>
-        </a>
-
-        <!-- Server Management Service -->
-        <a href="https://coolify.ogthejoe.com" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer">
-            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clip-rule="evenodd"/>
-                </svg>
-            </div>
-            <div>
-                <p class="text-white text-base font-medium leading-normal">
-                    <span class="status-indicator status-checking" data-service="coolify"></span>
-                    Server Management
-                </p>
-                <p class="text-[#a093c8] text-sm font-normal leading-normal">Docker container management</p>
-            </div>
-        </a>
-        <!-- NocoDB Service -->
-        <a href="https://nocodb.ogthejoe.com" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer">
-            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
-                </svg>
-            </div>
-            <div>
-                <p class="text-white text-base font-medium leading-normal">
-                    <span class="status-indicator status-checking" data-service="nocodb"></span>
-                    NocoDB
-                </p>
-                <p class="text-[#a093c8] text-sm font-normal leading-normal">Database management interface</p>
-            </div>
-        </a>
-    </div>
-    <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Quick Links</h2>
-    <div id="quickLinksGrid" class="grid grid-cols-[repeat(auto-fit,minmax(100px,175px))] gap-3 p-4">
-
-            <div class="text-center px-4 pb-3">
-                <p class="text-[#a093c8] text-sm">Quick links are loaded from configuration</p>
-            </div>
-            <footer class="flex justify-center">
-                <div class="flex max-w-[960px] flex-1 flex-col">
-                    <footer class="flex flex-col gap-6 px-5 py-10 text-center">
-                        <div class="flex flex-wrap items-center justify-center gap-6">
-                            <a class="text-[#a093c8] text-base font-normal leading-normal min-w-40" href="https://github.com/KenanMathews">GitHub Profile</a>
-                        </div>
-                        <div class="flex flex-wrap justify-center gap-4">
-                            <a href="https://github.com/KenanMathews">
-                                <div class="text-[#a093c8]">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                                        <path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"/>
-                                    </svg>
-                                </div>
-                            </a>
-                        </div>
-                        <p class="text-[#a093c8] text-base font-normal leading-normal">Powered by Raspberry Pi • Self-hosted with ❤️</p>
-                    </footer>
-                </div>
-            </footer>
-        </div>
-                    
-                    <p id="lastChecked" class="text-[#a093c8] text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
+                <!-- Services Section -->
+                <section class="mb-24" id="services">
+                    <h2 class="text-3xl font-bold tracking-tight text-center mb-4">Live Services</h2>
+                    <p id="lastChecked" class="text-[#a093c8] text-sm font-normal text-center mb-8">
                         Checking service status...
                     </p>
+                    
+                    <div id="servicesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- File Sharing Service -->
+                        <a href="https://copyparty.ogthejoe.com" target="_blank" class="service-card flex flex-col items-center justify-center p-6 rounded-xl aspect-square group">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-3xl text-white">description</span>
+                            </div>
+                            <h3 class="text-lg font-bold mb-1">
+                                <span class="status-indicator status-checking" data-service="copyparty"></span>
+                                File Sharing
+                            </h3>
+                            <p class="text-[#a093c8] text-sm text-center">Secure file sharing and storage</p>
+                        </a>
+
+                        <!-- VN Story Editor Service -->
+                        <a href="https://story-editor.ogthejoe.com" target="_blank" class="service-card flex flex-col items-center justify-center p-6 rounded-xl aspect-square group">
+                            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-3xl text-white">edit</span>
+                            </div>
+                            <h3 class="text-lg font-bold mb-1">
+                                <span class="status-indicator status-checking" data-service="story-editor"></span>
+                                VN Story Editor
+                            </h3>
+                            <p class="text-[#a093c8] text-sm text-center">Create and edit visual novel stories</p>
+                        </a>
+
+                        <!-- VN Compiler API Service -->
+                        <a href="https://vn-compiler.ogthejoe.com" target="_blank" class="service-card flex flex-col items-center justify-center p-6 rounded-xl aspect-square group">
+                            <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-3xl text-white">settings</span>
+                            </div>
+                            <h3 class="text-lg font-bold mb-1">
+                                <span class="status-indicator status-checking" data-service="vn-compiler"></span>
+                                VN Compiler API
+                            </h3>
+                            <p class="text-[#a093c8] text-sm text-center">Compile visual novel projects</p>
+                        </a>
+
+                        <!-- Server Management Service -->
+                        <a href="https://coolify.ogthejoe.com" target="_blank" class="service-card flex flex-col items-center justify-center p-6 rounded-xl aspect-square group">
+                            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-3xl text-white">dns</span>
+                            </div>
+                            <h3 class="text-lg font-bold mb-1">
+                                <span class="status-indicator status-checking" data-service="coolify"></span>
+                                Server Management
+                            </h3>
+                            <p class="text-[#a093c8] text-sm text-center">Docker container management</p>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Details Section -->
+                <section class="mb-24" id="details">
+                    <h2 class="text-3xl font-bold tracking-tight text-center mb-12">Service Details</h2>
+                    <div class="space-y-16">
+                        <!-- File Sharing -->
+                        <div class="grid md:grid-cols-2 gap-12 items-center">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-3">Seamless File Sharing with CopyParty</h3>
+                                <p class="text-gray-400 mb-6 text-lg">
+                                    CopyParty offers a secure, self-hosted file sharing solution. Upload, organize, and share files with fine-grained permissions and real-time synchronization across devices.
+                                </p>
+                                <a class="inline-flex items-center justify-center rounded-md h-10 px-6 bg-[#283039] text-white text-sm font-medium hover:bg-[#3b4754] transition-colors" href="https://copyparty.ogthejoe.com" target="_blank">
+                                    Access Service <span class="material-symbols-outlined ml-2 text-base">arrow_forward</span>
+                                </a>
+                            </div>
+                            <div class="w-full h-80 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow-2xl flex items-center justify-center">
+                                <span class="material-symbols-outlined text-8xl text-white/80">folder_shared</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Matrix Chat -->
+                        <div class="grid md:grid-cols-2 gap-12 items-center">
+                            <div class="w-full h-80 bg-gradient-to-br from-green-500 to-teal-600 rounded-lg shadow-2xl flex items-center justify-center md:order-first">
+                                <span class="material-symbols-outlined text-8xl text-white/80">chat</span>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold mb-3">Matrix Chat with Element</h3>
+                                <p class="text-gray-400 mb-6 text-lg">
+                                    Secure, decentralized communication powered by Matrix protocol. Connect with teams and communities through our self-hosted Element client with end-to-end encryption.
+                                </p>
+                                <a class="inline-flex items-center justify-center rounded-md h-10 px-6 bg-[#283039] text-white text-sm font-medium hover:bg-[#3b4754] transition-colors" href="http://chat.ogthejoe.com" target="_blank">
+                                    Join Chat <span class="material-symbols-outlined ml-2 text-base">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Visual Novel Development -->
+                        <div class="grid md:grid-cols-2 gap-12 items-center">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-3">Visual Novel Development Suite</h3>
+                                <p class="text-gray-400 mb-6 text-lg">
+                                    Complete toolkit for visual novel creation including our story editor and compiler API. Build interactive narratives with branching storylines and rich media support.
+                                </p>
+                                <div class="flex gap-3">
+                                    <a class="inline-flex items-center justify-center rounded-md h-10 px-6 bg-[#283039] text-white text-sm font-medium hover:bg-[#3b4754] transition-colors" href="https://story-editor.ogthejoe.com" target="_blank">
+                                        Story Editor <span class="material-symbols-outlined ml-2 text-base">edit</span>
+                                    </a>
+                                    <a class="inline-flex items-center justify-center rounded-md h-10 px-6 bg-[#283039] text-white text-sm font-medium hover:bg-[#3b4754] transition-colors" href="https://vn-compiler.ogthejoe.com" target="_blank">
+                                        Compiler API <span class="material-symbols-outlined ml-2 text-base">settings</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="w-full h-80 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg shadow-2xl flex items-center justify-center">
+                                <span class="material-symbols-outlined text-8xl text-white/80">auto_stories</span>
+                            </div>
+                        </div>
+
+                        <!-- Server Management -->
+                        <div class="grid md:grid-cols-2 gap-12 items-center">
+                            <div class="w-full h-80 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg shadow-2xl flex items-center justify-center md:order-first">
+                                <span class="material-symbols-outlined text-8xl text-white/80">dns</span>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold mb-3">Server Management with Coolify</h3>
+                                <p class="text-gray-400 mb-6 text-lg">
+                                    Comprehensive Docker container management platform. Deploy, monitor, and scale applications with ease using our self-hosted Coolify instance for complete infrastructure control.
+                                </p>
+                                <a class="inline-flex items-center justify-center rounded-md h-10 px-6 bg-[#283039] text-white text-sm font-medium hover:bg-[#3b4754] transition-colors" href="https://coolify.ogthejoe.com" target="_blank">
+                                    Access Dashboard <span class="material-symbols-outlined ml-2 text-base">admin_panel_settings</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Internal Services -->
+                        <div class="grid md:grid-cols-2 gap-12 items-center">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-3">Infrastructure & Automation Services</h3>
+                                <p class="text-gray-400 mb-6 text-lg">
+                                    Our backend infrastructure includes Home Assistant for smart home automation, NocoDB for database management, and additional services like Cloudflared for secure tunneling and MiniDLNA for media streaming.
+                                </p>
+                                <div class="grid grid-cols-2 gap-3 text-sm">
+                                    <a href="https://homeassistant.ogthejoe.com" target="_blank" class="bg-[#1c2127] p-3 rounded-lg border border-[#283039] hover:border-cyan-400 transition-colors cursor-pointer">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="material-symbols-outlined text-cyan-400">home</span>
+                                            <span class="font-medium">Home Assistant</span>
+                                        </div>
+                                        <span class="text-gray-400">Smart Home Automation</span>
+                                    </a>
+                                    <a href="https://nocodb.ogthejoe.com" target="_blank" class="bg-[#1c2127] p-3 rounded-lg border border-[#283039] hover:border-emerald-400 transition-colors cursor-pointer">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="material-symbols-outlined text-emerald-400">storage</span>
+                                            <span class="font-medium">NocoDB</span>
+                                        </div>
+                                        <span class="text-gray-400">Database Management</span>
+                                    </a>
+                                    <div class="bg-[#1c2127] p-3 rounded-lg border border-[#283039] opacity-75">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="material-symbols-outlined text-blue-400">cloud</span>
+                                            <span class="font-medium">Cloudflared</span>
+                                        </div>
+                                        <span class="text-gray-400">Secure Tunneling</span>
+                                    </div>
+                                    <div class="bg-[#1c2127] p-3 rounded-lg border border-[#283039] opacity-75">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="material-symbols-outlined text-purple-400">library_music</span>
+                                            <span class="font-medium">MiniDLNA</span>
+                                        </div>
+                                        <span class="text-gray-400">Media Streaming</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full h-80 bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg shadow-2xl flex items-center justify-center">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <span class="material-symbols-outlined text-4xl text-white/60">home</span>
+                                    <span class="material-symbols-outlined text-4xl text-white/60">storage</span>
+                                    <span class="material-symbols-outlined text-4xl text-white/60">cloud</span>
+                                    <span class="material-symbols-outlined text-4xl text-white/60">library_music</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quick Links Section -->
+                <section class="mb-24" id="links">
+                    <h2 class="text-3xl font-bold tracking-tight text-center mb-12">Quick Links</h2>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                        <a class="service-card flex items-center gap-4 p-6 rounded-lg" href="https://github.com/KenanMathews" target="_blank">
+                            <span class="material-symbols-outlined text-3xl text-[var(--primary-color)]">code</span>
+                            <div>
+                                <h3 class="text-lg font-bold">GitHub Profile</h3>
+                                <p class="text-sm text-gray-400">View our open source projects</p>
+                            </div>
+                        </a>
+                        <a class="service-card flex items-center gap-4 p-6 rounded-lg" href="https://coolify.ogthejoe.com" target="_blank">
+                            <span class="material-symbols-outlined text-3xl text-[var(--primary-color)]">admin_panel_settings</span>
+                            <div>
+                                <h3 class="text-lg font-bold">Server Management</h3>
+                                <p class="text-sm text-gray-400">Access Coolify dashboard</p>
+                            </div>
+                        </a>
+                        <a class="service-card flex items-center gap-4 p-6 rounded-lg" href="#contact">
+                            <span class="material-symbols-outlined text-3xl text-[var(--primary-color)]">help</span>
+                            <div>
+                                <h3 class="text-lg font-bold">Support</h3>
+                                <p class="text-sm text-gray-400">Get help and support</p>
+                            </div>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Contact Section -->
+                <section class="text-center" id="contact">
+                    <h2 class="text-3xl font-bold tracking-tight mb-4">Contact Us</h2>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-8">
+                        Have a question or want to contribute? The best way to reach us is through our GitHub repository.
+                    </p>
+                    <div class="flex items-center justify-center gap-4">
+                        <a class="inline-flex items-center justify-center rounded-md h-12 px-8 bg-[var(--primary-color)] text-white text-base font-bold tracking-wide hover:bg-[#0f6ac8] transition-colors shadow-lg shadow-[var(--primary-color)]/20" href="https://github.com/KenanMathews" rel="noopener noreferrer" target="_blank">
+                            <svg aria-hidden="true" class="h-6 w-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                                <path clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.165 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.03-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.378.203 2.398.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" fill-rule="evenodd"></path>
+                            </svg>
+                            Visit GitHub
+                        </a>
+                        <a class="inline-flex items-center justify-center rounded-md h-12 px-8 bg-[#283039] text-white text-base font-medium hover:bg-[#3b4754] transition-colors" href="https://ogthejoe.com" target="_blank">
+                            <span class="material-symbols-outlined mr-2">home</span>
+                            Main Site
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-[#1c2127] border-t border-[#283039] mt-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p class="text-sm text-gray-500">© 2024 ogthejoe.com. All rights reserved.</p>
+                    <p class="text-sm text-[#a093c8]">Powered by Raspberry Pi • Self-hosted with ❤️</p>
                 </div>
             </div>
-
-        
+        </footer>
     </div>
 
-    <script src="js/app.js?v=1.1"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

@@ -6,80 +6,160 @@ class OgTheJoeHomepage {
                 name: 'copyparty',
                 url: 'https://copyparty.ogthejoe.com',
                 healthEndpoint: 'https://copyparty.ogthejoe.com/',
-                displayName: 'File Sharing'
+                displayName: 'File Sharing',
+                description: 'Secure file sharing and storage',
+                icon: 'description',
+                gradient: 'from-blue-500 to-purple-600'
+            },
+            {
+                name: 'chat',
+                url: 'http://chat.ogthejoe.com',
+                healthEndpoint: 'http://chat.ogthejoe.com/',
+                displayName: 'Matrix Chat',
+                description: 'Element Matrix chat client',
+                icon: 'chat',
+                gradient: 'from-green-500 to-teal-600'
             },
             {
                 name: 'story-editor',
                 url: 'https://story-editor.ogthejoe.com',
                 healthEndpoint: 'https://story-editor.ogthejoe.com/health',
-                displayName: 'VN Story Editor'
+                displayName: 'VN Story Editor',
+                description: 'Create and edit visual novel stories',
+                icon: 'edit',
+                gradient: 'from-purple-500 to-pink-600'
             },
             {
                 name: 'vn-compiler',
                 url: 'https://vn-compiler.ogthejoe.com',
                 healthEndpoint: 'https://vn-compiler.ogthejoe.com/health',
-                displayName: 'VN Compiler API'
+                displayName: 'VN Compiler API',
+                description: 'Compile visual novel projects',
+                icon: 'settings',
+                gradient: 'from-orange-500 to-red-600'
             },
             {
                 name: 'coolify',
                 url: 'https://coolify.ogthejoe.com',
                 healthEndpoint: 'https://coolify.ogthejoe.com/',
-                displayName: 'Server Management'
+                displayName: 'Server Management',
+                description: 'Docker container management',
+                icon: 'dns',
+                gradient: 'from-indigo-500 to-blue-600'
+            },
+            {
+                name: 'homeassistant',
+                url: 'https://homeassistant.ogthejoe.com',
+                healthEndpoint: 'https://homeassistant.ogthejoe.com/',
+                displayName: 'Home Assistant',
+                description: 'Smart home automation',
+                icon: 'home',
+                gradient: 'from-cyan-500 to-teal-600'
             },
             {
                 name: 'nocodb',
                 url: 'https://nocodb.ogthejoe.com',
                 healthEndpoint: 'https://nocodb.ogthejoe.com/',
-                displayName: 'NocoDB'
+                displayName: 'NocoDB',
+                description: 'Database management',
+                icon: 'storage',
+                gradient: 'from-emerald-500 to-green-600'
             }
         ];
         
         this.init();
-        this.quickLinks = [];
-        this.NOCODB_PUBLIC_API = 'https://nocodb.ogthejoe.com/api/v1/db/public/shared-view/361b5c1b-2ca6-4d76-83ab-e753e50e6df8/rows';
-        this.loadQuickLinks();
     }
 
     init() {
+        this.renderServices();
         this.setupSearch();
+        this.setupSmoothScrolling();
         this.checkServiceStatus();
         // Check status every 30 seconds
         setInterval(() => this.checkServiceStatus(), 30000);
     }
 
+    renderServices() {
+        const servicesGrid = document.getElementById('servicesGrid');
+        if (!servicesGrid) return;
+
+        servicesGrid.innerHTML = ''; // Clear existing content
+
+        this.services.forEach(service => {
+            const serviceCard = document.createElement('a');
+            serviceCard.href = service.url;
+            serviceCard.target = service.internal ? '_self' : '_blank';
+            serviceCard.className = 'service-card flex flex-col items-center justify-center p-6 rounded-xl aspect-square group';
+            
+            // If it's an internal service without a URL, make it non-clickable
+            if (service.internal && service.url === '#') {
+                serviceCard.href = '#';
+                serviceCard.onclick = (e) => e.preventDefault();
+                serviceCard.className += ' opacity-75 cursor-default';
+            }
+
+            serviceCard.innerHTML = `
+                <div class="w-16 h-16 bg-gradient-to-br ${service.gradient} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-3xl text-white">${service.icon}</span>
+                </div>
+                <h3 class="text-lg font-bold mb-1">
+                    ${service.healthEndpoint ? `<span class="status-indicator status-checking" data-service="${service.name}"></span>` : ''}
+                    ${service.displayName}
+                </h3>
+                <p class="text-[#a093c8] text-sm text-center">${service.description}</p>
+            `;
+
+            servicesGrid.appendChild(serviceCard);
+        });
+    }
+
     setupSearch() {
         const searchInput = document.getElementById('searchInput');
+        const servicesGrid = document.getElementById('servicesGrid');
         
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value.toLowerCase();
+                const serviceCards = servicesGrid.querySelectorAll('a');
                 
-                // Search services
-                const servicesGrid = document.getElementById('servicesGrid');
-                const serviceCards = servicesGrid.querySelectorAll('.service-card');
                 serviceCards.forEach(card => {
-                    const serviceName = card.querySelector('p').textContent.toLowerCase();
-                    const serviceDesc = card.querySelector('.text-\\[\\#a093c8\\]').textContent.toLowerCase();
-                    card.style.display = (serviceName.includes(query) || serviceDesc.includes(query)) ? 'flex' : 'none';
-                });
-                
-                // Search quick links
-                const quickLinksGrid = document.getElementById('quickLinksGrid');
-                const quickLinkCards = quickLinksGrid.querySelectorAll('.service-card');
-                quickLinkCards.forEach(card => {
-                    const linkName = card.querySelector('p').textContent.toLowerCase();
-                    const linkDesc = card.querySelector('.text-\\[\\#a093c8\\]').textContent.toLowerCase();
-                    card.style.display = (linkName.includes(query) || linkDesc.includes(query)) ? 'flex' : 'none';
+                    const serviceName = card.querySelector('h3').textContent.toLowerCase();
+                    const serviceDesc = card.querySelector('p').textContent.toLowerCase();
+                    
+                    if (serviceName.includes(query) || serviceDesc.includes(query)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
                 });
             });
         }
+    }
+
+    setupSmoothScrolling() {
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     }
 
     async checkServiceStatus() {
         const lastCheckedElement = document.getElementById('lastChecked');
         const now = new Date().toLocaleString();
         
-        for (const service of this.services) {
+        // Set all indicators to checking state (only for services with health endpoints)
+        const publicServices = this.services.filter(service => service.healthEndpoint);
+        
+        for (const service of publicServices) {
             const indicator = document.querySelector(`[data-service="${service.name}"]`);
             if (indicator) {
                 indicator.className = 'status-indicator status-checking';
@@ -90,12 +170,14 @@ class OgTheJoeHomepage {
             lastCheckedElement.textContent = `Checking services... Last attempt: ${now}`;
         }
 
+        // Check only services with health endpoints
         const results = await Promise.allSettled(
-            this.services.map(service => this.checkSingleService(service))
+            publicServices.map(service => this.checkSingleService(service))
         );
 
+        // Update indicators based on results
         results.forEach((result, index) => {
-            const service = this.services[index];
+            const service = publicServices[index];
             const indicator = document.querySelector(`[data-service="${service.name}"]`);
             
             if (indicator) {
@@ -107,18 +189,28 @@ class OgTheJoeHomepage {
             }
         });
 
+        // Update status summary
         if (lastCheckedElement) {
             const onlineCount = results.filter(r => r.status === 'fulfilled' && r.value).length;
-            lastCheckedElement.textContent = `Last checked: ${now} • ${onlineCount}/${this.services.length} services online`;
+            const totalPublicServices = publicServices.length;
+            const internalCount = this.services.length - totalPublicServices;
+            
+            let statusText = `Last checked: ${now} • ${onlineCount}/${totalPublicServices} public services online`;
+            if (internalCount > 0) {
+                statusText += ` • ${internalCount} internal services`;
+            }
+            
+            lastCheckedElement.textContent = statusText;
         }
     }
 
     async checkSingleService(service) {
         try {
-            // Simple approach: try to fetch with no-cors mode
+            // Use AbortController for timeout
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3000);
             
+            // Simple approach: try to fetch with no-cors mode
             const response = await fetch(service.healthEndpoint, {
                 method: 'HEAD',
                 mode: 'no-cors',
@@ -128,88 +220,142 @@ class OgTheJoeHomepage {
             clearTimeout(timeoutId);
             return true; // If no error thrown, assume service is up
         } catch (error) {
+            console.log(`Service ${service.name} appears to be offline:`, error.message);
             return false;
         }
     }
 
-    async loadQuickLinks() {
-        try {
-            const response = await fetch(this.NOCODB_PUBLIC_API, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            
-            this.quickLinks = data.list
-                .filter(link => link.active === 1)
-                .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-                
-            this.renderQuickLinks();
-            
-        } catch (error) {
-            console.warn('Could not load quick links from NocoDB:', error);
-        }
+    // Method to manually refresh service status
+    refreshStatus() {
+        this.checkServiceStatus();
     }
 
-    renderQuickLinks() {
-        const grid = document.getElementById('quickLinksGrid');
-        if (!grid) return;
-
-        const iconsMap = {
-            database: '<ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>',
-            
-            gallery: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21,15 16,10 5,21"></polyline>',
-            
-            link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>',
-            
-            document: '<path d="M14,2 L6,2 C4.9,2 4,2.9 4,4 L4,20 C4,21.1 4.89,22 5.99,22 L18,22 C19.1,22 20,21.1 20,20 L20,8 L14,2 Z"></path><polyline points="14,2 14,8 20,8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10,9 9,9 8,9"></polyline>',
-            
-            tool: '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>',
-            
-            external: '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15,3 21,3 21,9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>',            
-
-            chart: '<line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>',
-            
-            music: '<path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle>',
-            
-            code: '<polyline points="16,18 22,12 16,6"></polyline><polyline points="8,6 2,12 8,18"></polyline>',
-            
-            default: '<line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12,5 19,12 12,19"></polyline>'
-        };
-
-        grid.innerHTML = this.quickLinks.map(link => `
-            <a href="${link.url}" target="_blank" class="service-card flex flex-col gap-3 pb-3 cursor-pointer">
-                <div class="w-full aspect-square bg-gradient-to-br ${link.color} rounded-xl flex items-center justify-center">
-                    <svg class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        ${iconsMap[link.icon] || iconsMap.default}
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-white text-base font-medium leading-normal">${link.name}</p>
-                    <p class="text-[#a093c8] text-sm font-normal leading-normal">${link.description}</p>
-                </div>
-            </a>
-        `).join('');
+    // Method to get current service statuses
+    getServiceStatuses() {
+        const statuses = {};
+        this.services.forEach(service => {
+            const indicator = document.querySelector(`[data-service="${service.name}"]`);
+            if (indicator) {
+                if (indicator.classList.contains('status-online')) {
+                    statuses[service.name] = 'online';
+                } else if (indicator.classList.contains('status-offline')) {
+                    statuses[service.name] = 'offline';
+                } else {
+                    statuses[service.name] = 'checking';
+                }
+            } else {
+                statuses[service.name] = 'internal';
+            }
+        });
+        return statuses;
     }
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new OgTheJoeHomepage();
+    // Create global instance
+    window.ogTheJoeHomepage = new OgTheJoeHomepage();
+    
+    // Log initialization with detailed info
+    console.log('🚀 OgTheJoe Homepage initialized');
+    console.log('📋 Available services:', window.ogTheJoeHomepage.services.map(s => `${s.displayName} (${s.internal ? 'internal' : 'public'})`));
+    console.log('🔧 Debug commands available:');
+    console.log('  - ogTheJoeHomepage.refreshStatus() : Manually refresh all service statuses');
+    console.log('  - ogTheJoeHomepage.testService("serviceName") : Test a specific service');
+    console.log('  - ogTheJoeHomepage.getServiceStatuses() : Get current status of all services');
+    
+    // Show public vs internal service breakdown
+    const publicCount = window.ogTheJoeHomepage.services.filter(s => !s.internal).length;
+    const internalCount = window.ogTheJoeHomepage.services.filter(s => s.internal).length;
+    console.log(`📊 Service breakdown: ${publicCount} public, ${internalCount} internal`);
 });
 
-// Handle service card clicks
+// Handle service card clicks for analytics/logging
 document.addEventListener('click', (e) => {
     const serviceCard = e.target.closest('.service-card');
     if (serviceCard) {
-        const serviceName = serviceCard.dataset.service;
-        console.log(`Navigating to service: ${serviceName}`);
+        const serviceName = serviceCard.querySelector('h3')?.textContent?.trim();
+        if (serviceName) {
+            console.log(`Service accessed: ${serviceName}`);
+            // You can add analytics tracking here if needed
+        }
     }
 });
+
+// Handle search button in header (if needed for mobile or additional functionality)
+document.addEventListener('click', (e) => {
+    if (e.target.closest('button')?.querySelector('.material-symbols-outlined')?.textContent === 'search') {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.focus();
+            searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    // Ctrl/Cmd + K to focus search
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.focus();
+            searchInput.select();
+        }
+    }
+    
+    // Escape to clear search
+    if (e.key === 'Escape') {
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput && document.activeElement === searchInput) {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input'));
+            searchInput.blur();
+        }
+    }
+});
+
+// Add some utility functions for potential future use
+const utils = {
+    // Format timestamp for display
+    formatTimestamp: (date = new Date()) => {
+        return date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    },
+    
+    // Check if element is in viewport
+    isInViewport: (element) => {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    },
+    
+    // Debounce function for search optimization
+    debounce: (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+};
+
+// Export for potential module use
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { OgTheJoeHomepage, utils };
+}
