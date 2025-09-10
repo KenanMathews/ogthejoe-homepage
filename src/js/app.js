@@ -64,6 +64,15 @@ class OgTheJoeHomepage {
                 description: 'Database management',
                 icon: 'storage',
                 gradient: 'from-emerald-500 to-green-600'
+            },
+            {
+                name: 'immich',
+                url: 'https://immich.ogthejoe.com',
+                healthEndpoint: 'https://immich.ogthejoe.com/',
+                displayName: 'Photo Management',
+                description: 'Self-hosted photo and video backup',
+                icon: 'photo_library',
+                gradient: 'from-rose-500 to-pink-600'
             }
         ];
         
