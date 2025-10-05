@@ -119,6 +119,19 @@ class OgTheJoeHomepage {
         const icon = this.iconMap[service.icon] || this.iconMap['default'];
         const gradient = this.gradientMap[service.icon] || this.gradientMap['default'];
 
+        // Remove port numbers from URL and force HTTPS
+        let cleanUrl = service.url;
+        if (cleanUrl) {
+            try {
+                const url = new URL(cleanUrl);
+                // Remove port and force HTTPS
+                cleanUrl = `https://${url.hostname}${url.pathname}${url.search}${url.hash}`;
+            } catch (e) {
+                // If URL parsing fails, use original
+                cleanUrl = service.url;
+            }
+        }
+
         // Parse status
         const [state, health] = service.status.split(':');
         let statusBadge = '';
@@ -135,7 +148,7 @@ class OgTheJoeHomepage {
             displayName: service.displayName || service.name,
             icon: icon,
             description: service.description || 'No description',
-            url: service.url,
+            url: cleanUrl,
             gradient: gradient,
             statusBadge: statusBadge
         };
