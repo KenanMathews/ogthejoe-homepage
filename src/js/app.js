@@ -1,144 +1,231 @@
-// Service status checker and search functionality
+// Hybrid Loading Homepage - Priority services load instantly, then update from n8n
 class OgTheJoeHomepage {
     constructor() {
-        this.services = [
+        // n8n webhook endpoint
+        this.n8nEndpoint = 'https://n8n.ogthejoe.com/webhook/coolify-services';
+
+        // Priority services - Load instantly (0ms perceived load)
+        this.priorityServices = [
             {
-                name: 'copyparty',
-                url: 'https://copyparty.ogthejoe.com',
-                healthEndpoint: 'https://copyparty.ogthejoe.com/',
                 displayName: 'File Sharing',
-                description: 'Secure file sharing and storage',
                 icon: 'description',
-                gradient: 'from-blue-500 to-purple-600'
+                description: 'Self-hosted file sharing with uploads and transfers.',
+                url: 'https://copyparty.ogthejoe.com',
+                gradient: 'from-blue-500 to-purple-600',
+                status: 'checking'
             },
             {
-                name: 'chat',
-                url: 'http://chat.ogthejoe.com',
-                healthEndpoint: 'http://chat.ogthejoe.com/',
-                displayName: 'Matrix Chat',
-                description: 'Element Matrix chat client',
+                displayName: 'Element Chat',
                 icon: 'chat',
-                gradient: 'from-green-500 to-teal-600'
+                description: 'Secure Matrix chat with end-to-end encryption.',
+                url: 'http://chat.ogthejoe.com',
+                gradient: 'from-cyan-500 to-blue-600',
+                status: 'checking'
             },
             {
-                name: 'story-editor',
-                url: 'https://story-editor.ogthejoe.com',
-                healthEndpoint: 'https://story-editor.ogthejoe.com/health',
-                displayName: 'VN Story Editor',
-                description: 'Create and edit visual novel stories',
-                icon: 'edit',
-                gradient: 'from-purple-500 to-pink-600'
+                displayName: 'Matrix Chat',
+                icon: 'chat',
+                description: 'Decentralized secure messaging server.',
+                url: 'http://matrix.ogthejoe.com',
+                gradient: 'from-cyan-500 to-blue-600',
+                status: 'checking'
             },
             {
-                name: 'vn-compiler',
-                url: 'https://vn-compiler.ogthejoe.com',
-                healthEndpoint: 'https://vn-compiler.ogthejoe.com/health',
-                displayName: 'VN Compiler API',
-                description: 'Compile visual novel projects',
-                icon: 'settings',
-                gradient: 'from-orange-500 to-red-600'
-            },
-            {
-                name: 'coolify',
-                url: 'https://coolify.ogthejoe.com',
-                healthEndpoint: 'https://coolify.ogthejoe.com/',
-                displayName: 'Server Management',
-                description: 'Docker container management',
-                icon: 'dns',
-                gradient: 'from-indigo-500 to-blue-600'
-            },
-            {
-                name: 'homeassistant',
-                url: 'https://homeassistant.ogthejoe.com',
-                healthEndpoint: 'https://homeassistant.ogthejoe.com/',
                 displayName: 'Home Assistant',
-                description: 'Smart home automation',
                 icon: 'home',
-                gradient: 'from-cyan-500 to-teal-600'
+                description: 'Smart home automation and device control.',
+                url: 'https://homeassistant.ogthejoe.com',
+                gradient: 'from-teal-500 to-cyan-600',
+                status: 'checking'
             },
             {
-                name: 'nocodb',
-                url: 'https://nocodb.ogthejoe.com',
-                healthEndpoint: 'https://nocodb.ogthejoe.com/',
-                displayName: 'NocoDB',
-                description: 'Database management',
-                icon: 'storage',
-                gradient: 'from-emerald-500 to-green-600'
-            },
-            {
-                name: 'immich',
-                url: 'https://immich.ogthejoe.com',
-                healthEndpoint: 'https://immich.ogthejoe.com/',
-                displayName: 'Photo Management',
-                description: 'Self-hosted photo and video backup',
-                icon: 'photo_library',
-                gradient: 'from-rose-500 to-pink-600'
+                displayName: 'Coolify',
+                icon: 'dns',
+                description: 'Self-hosted server management platform.',
+                url: 'https://coolify.ogthejoe.com',
+                gradient: 'from-purple-500 to-pink-600',
+                status: 'checking'
             }
         ];
-        
+
+        // Icon mapping for dynamic services
+        this.iconMap = {
+            'ai': 'smart_toy',
+            'files': 'description',
+            'editor': 'edit',
+            'compiler': 'settings',
+            'server': 'dns',
+            'chat': 'chat',
+            'media': 'photo_library',
+            'git': 'code',
+            'analytics': 'bar_chart',
+            'database': 'storage',
+            'game': 'sports_esports',
+            'default': 'cloud'
+        };
+
+        this.gradientMap = {
+            'ai': 'from-pink-500 to-purple-600',
+            'files': 'from-blue-500 to-purple-600',
+            'editor': 'from-green-500 to-teal-600',
+            'compiler': 'from-orange-500 to-red-600',
+            'server': 'from-purple-500 to-pink-600',
+            'chat': 'from-cyan-500 to-blue-600',
+            'media': 'from-rose-500 to-pink-600',
+            'git': 'from-teal-500 to-cyan-600',
+            'analytics': 'from-amber-500 to-orange-600',
+            'database': 'from-indigo-500 to-purple-600',
+            'game': 'from-yellow-500 to-amber-600',
+            'default': 'from-gray-600 to-gray-800'
+        };
+
+        this.services = this.priorityServices; // Start with priority services
         this.init();
     }
 
-    init() {
-        this.renderServices();
+    async init() {
+        // Phase 1: Render priority services immediately (0ms)
+        this.renderServices(this.priorityServices);
         this.setupSearch();
         this.setupSmoothScrolling();
-        this.checkServiceStatus();
-        // Check status every 30 seconds
-        setInterval(() => this.checkServiceStatus(), 30000);
+
+        // Phase 2: Load dynamic services in background (non-blocking)
+        await this.loadDynamicServices();
     }
 
-    renderServices() {
+    async loadDynamicServices() {
+        try {
+            const response = await fetch(this.n8nEndpoint);
+
+            if (response.ok) {
+                const liveServices = await response.json();
+
+                // Transform n8n data to our format
+                const transformedServices = liveServices.map(service => this.transformService(service));
+
+                // Seamlessly update with live data
+                this.updateServices(transformedServices);
+
+                console.log(`✅ Loaded ${transformedServices.length} services from n8n`);
+            } else {
+                console.warn('❌ n8n webhook failed, using priority services');
+            }
+        } catch (error) {
+            console.warn('❌ Failed to load dynamic services, using priority services:', error);
+        }
+    }
+
+    transformService(service) {
+        const icon = this.iconMap[service.icon] || this.iconMap['default'];
+        const gradient = this.gradientMap[service.icon] || this.gradientMap['default'];
+
+        // Parse status
+        const [state, health] = service.status.split(':');
+        let statusBadge = '';
+
+        if (state === 'running' && health === 'healthy') {
+            statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/50"><span class="material-symbols-outlined text-xs">check_circle</span>Healthy</span>';
+        } else if (state === 'running' && health === 'unhealthy') {
+            statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-amber-500/20 text-amber-300 border border-amber-500/50"><span class="material-symbols-outlined text-xs">warning</span>Unhealthy</span>';
+        } else if (state === 'stopped') {
+            statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-red-500/20 text-red-300 border border-red-500/50"><span class="material-symbols-outlined text-xs">stop_circle</span>Stopped</span>';
+        }
+
+        return {
+            displayName: service.displayName || service.name,
+            icon: icon,
+            description: service.description || 'No description',
+            url: service.url,
+            gradient: gradient,
+            statusBadge: statusBadge
+        };
+    }
+
+    updateServices(newServices) {
+        this.services = newServices;
+
+        // Fade out old cards
+        const grid = document.getElementById('servicesGrid');
+        const cards = grid.querySelectorAll('.service-card-wrapper');
+
+        cards.forEach(card => card.classList.add('fade-out'));
+
+        // Wait for fade animation
+        setTimeout(() => {
+            // Render new services
+            this.renderServices(newServices);
+
+            // Fade in new cards
+            requestAnimationFrame(() => {
+                const newCards = grid.querySelectorAll('.service-card-wrapper');
+                newCards.forEach(card => card.classList.add('fade-in'));
+            });
+
+            // Update last checked timestamp
+            this.updateLastChecked();
+        }, 300);
+    }
+
+    renderServices(services) {
         const servicesGrid = document.getElementById('servicesGrid');
         if (!servicesGrid) return;
 
-        servicesGrid.innerHTML = ''; // Clear existing content
+        servicesGrid.innerHTML = '';
 
-        this.services.forEach(service => {
+        services.forEach(service => {
+            // Create wrapper for transition
+            const wrapper = document.createElement('div');
+            wrapper.className = 'service-card-wrapper';
+
             const serviceCard = document.createElement('a');
             serviceCard.href = service.url;
-            serviceCard.target = service.internal ? '_self' : '_blank';
-            serviceCard.className = 'service-card flex flex-col items-center justify-center p-6 rounded-xl aspect-square group';
-            
-            // If it's an internal service without a URL, make it non-clickable
-            if (service.internal && service.url === '#') {
-                serviceCard.href = '#';
-                serviceCard.onclick = (e) => e.preventDefault();
-                serviceCard.className += ' opacity-75 cursor-default';
-            }
+            serviceCard.target = '_blank';
+            serviceCard.className = 'service-card flex flex-col p-6 rounded-xl group';
 
             serviceCard.innerHTML = `
-                <div class="w-16 h-16 bg-gradient-to-br ${service.gradient} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-3xl text-white">${service.icon}</span>
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-br ${service.gradient} rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-3xl text-white">${service.icon}</span>
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <h3 class="text-lg font-bold mb-2 truncate">${service.displayName}</h3>
+                        ${service.statusBadge || ''}
+                    </div>
                 </div>
-                <h3 class="text-lg font-bold mb-1">
-                    ${service.healthEndpoint ? `<span class="status-indicator status-checking" data-service="${service.name}"></span>` : ''}
-                    ${service.displayName}
-                </h3>
-                <p class="text-[#a093c8] text-sm text-center">${service.description}</p>
+                <p class="text-[#a093c8] text-sm line-clamp-2">${service.description}</p>
             `;
 
-            servicesGrid.appendChild(serviceCard);
+            wrapper.appendChild(serviceCard);
+            servicesGrid.appendChild(wrapper);
         });
+    }
+
+    updateLastChecked() {
+        const lastCheckedElement = document.getElementById('lastChecked');
+        if (lastCheckedElement) {
+            const now = new Date().toLocaleString();
+            lastCheckedElement.textContent = `Last updated: ${now} • ${this.services.length} services loaded`;
+        }
     }
 
     setupSearch() {
         const searchInput = document.getElementById('searchInput');
         const servicesGrid = document.getElementById('servicesGrid');
-        
+
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value.toLowerCase();
-                const serviceCards = servicesGrid.querySelectorAll('a');
-                
-                serviceCards.forEach(card => {
+                const wrappers = servicesGrid.querySelectorAll('.service-card-wrapper');
+
+                wrappers.forEach(wrapper => {
+                    const card = wrapper.querySelector('.service-card');
                     const serviceName = card.querySelector('h3').textContent.toLowerCase();
                     const serviceDesc = card.querySelector('p').textContent.toLowerCase();
-                    
+
                     if (serviceName.includes(query) || serviceDesc.includes(query)) {
-                        card.style.display = 'flex';
+                        wrapper.style.display = 'block';
                     } else {
-                        card.style.display = 'none';
+                        wrapper.style.display = 'none';
                     }
                 });
             });
@@ -146,7 +233,6 @@ class OgTheJoeHomepage {
     }
 
     setupSmoothScrolling() {
-        // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -160,144 +246,21 @@ class OgTheJoeHomepage {
             });
         });
     }
-
-    async checkServiceStatus() {
-        const lastCheckedElement = document.getElementById('lastChecked');
-        const now = new Date().toLocaleString();
-        
-        // Set all indicators to checking state (only for services with health endpoints)
-        const publicServices = this.services.filter(service => service.healthEndpoint);
-        
-        for (const service of publicServices) {
-            const indicator = document.querySelector(`[data-service="${service.name}"]`);
-            if (indicator) {
-                indicator.className = 'status-indicator status-checking';
-            }
-        }
-
-        if (lastCheckedElement) {
-            lastCheckedElement.textContent = `Checking services... Last attempt: ${now}`;
-        }
-
-        // Check only services with health endpoints
-        const results = await Promise.allSettled(
-            publicServices.map(service => this.checkSingleService(service))
-        );
-
-        // Update indicators based on results
-        results.forEach((result, index) => {
-            const service = publicServices[index];
-            const indicator = document.querySelector(`[data-service="${service.name}"]`);
-            
-            if (indicator) {
-                if (result.status === 'fulfilled' && result.value) {
-                    indicator.className = 'status-indicator status-online';
-                } else {
-                    indicator.className = 'status-indicator status-offline';
-                }
-            }
-        });
-
-        // Update status summary
-        if (lastCheckedElement) {
-            const onlineCount = results.filter(r => r.status === 'fulfilled' && r.value).length;
-            const totalPublicServices = publicServices.length;
-            const internalCount = this.services.length - totalPublicServices;
-            
-            let statusText = `Last checked: ${now} • ${onlineCount}/${totalPublicServices} public services online`;
-            if (internalCount > 0) {
-                statusText += ` • ${internalCount} internal services`;
-            }
-            
-            lastCheckedElement.textContent = statusText;
-        }
-    }
-
-    async checkSingleService(service) {
-        try {
-            // Use AbortController for timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            
-            // Simple approach: try to fetch with no-cors mode
-            const response = await fetch(service.healthEndpoint, {
-                method: 'HEAD',
-                mode: 'no-cors',
-                signal: controller.signal
-            });
-            
-            clearTimeout(timeoutId);
-            return true; // If no error thrown, assume service is up
-        } catch (error) {
-            console.log(`Service ${service.name} appears to be offline:`, error.message);
-            return false;
-        }
-    }
-
-    // Method to manually refresh service status
-    refreshStatus() {
-        this.checkServiceStatus();
-    }
-
-    // Method to get current service statuses
-    getServiceStatuses() {
-        const statuses = {};
-        this.services.forEach(service => {
-            const indicator = document.querySelector(`[data-service="${service.name}"]`);
-            if (indicator) {
-                if (indicator.classList.contains('status-online')) {
-                    statuses[service.name] = 'online';
-                } else if (indicator.classList.contains('status-offline')) {
-                    statuses[service.name] = 'offline';
-                } else {
-                    statuses[service.name] = 'checking';
-                }
-            } else {
-                statuses[service.name] = 'internal';
-            }
-        });
-        return statuses;
-    }
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Create global instance
     window.ogTheJoeHomepage = new OgTheJoeHomepage();
-    
-    // Log initialization with detailed info
-    console.log('🚀 OgTheJoe Homepage initialized');
-    console.log('📋 Available services:', window.ogTheJoeHomepage.services.map(s => `${s.displayName} (${s.internal ? 'internal' : 'public'})`));
-    console.log('🔧 Debug commands available:');
-    console.log('  - ogTheJoeHomepage.refreshStatus() : Manually refresh all service statuses');
-    console.log('  - ogTheJoeHomepage.testService("serviceName") : Test a specific service');
-    console.log('  - ogTheJoeHomepage.getServiceStatuses() : Get current status of all services');
-    
-    // Show public vs internal service breakdown
-    const publicCount = window.ogTheJoeHomepage.services.filter(s => !s.internal).length;
-    const internalCount = window.ogTheJoeHomepage.services.filter(s => s.internal).length;
-    console.log(`📊 Service breakdown: ${publicCount} public, ${internalCount} internal`);
+    console.log('🚀 OgTheJoe Homepage initialized with hybrid loading');
 });
 
-// Handle service card clicks for analytics/logging
+// Handle service card clicks
 document.addEventListener('click', (e) => {
     const serviceCard = e.target.closest('.service-card');
     if (serviceCard) {
         const serviceName = serviceCard.querySelector('h3')?.textContent?.trim();
         if (serviceName) {
             console.log(`Service accessed: ${serviceName}`);
-            // You can add analytics tracking here if needed
-        }
-    }
-});
-
-// Handle search button in header (if needed for mobile or additional functionality)
-document.addEventListener('click', (e) => {
-    if (e.target.closest('button')?.querySelector('.material-symbols-outlined')?.textContent === 'search') {
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.focus();
-            searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }
 });
@@ -313,7 +276,7 @@ document.addEventListener('keydown', (e) => {
             searchInput.select();
         }
     }
-    
+
     // Escape to clear search
     if (e.key === 'Escape') {
         const searchInput = document.getElementById('searchInput');
@@ -324,47 +287,3 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
-
-// Add some utility functions for potential future use
-const utils = {
-    // Format timestamp for display
-    formatTimestamp: (date = new Date()) => {
-        return date.toLocaleString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        });
-    },
-    
-    // Check if element is in viewport
-    isInViewport: (element) => {
-        const rect = element.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
-    },
-    
-    // Debounce function for search optimization
-    debounce: (func, wait) => {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-};
-
-// Export for potential module use
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { OgTheJoeHomepage, utils };
-}

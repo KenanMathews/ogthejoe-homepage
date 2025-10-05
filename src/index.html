@@ -57,6 +57,26 @@
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
+      .service-card-wrapper {
+        transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+      }
+      .service-card-wrapper.fade-out {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      .service-card-wrapper.fade-in {
+        animation: fadeInScale 400ms ease-out;
+      }
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
     </style>
 </head>
 <body>
@@ -78,7 +98,6 @@
                 <button class="flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-transparent text-gray-400 hover:bg-[#283039] hover:text-white transition-colors">
                     <span class="material-symbols-outlined text-xl">search</span>
                 </button>
-                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-transparent hover:border-[var(--primary-color)] transition-all" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAkMN5w7EES2PQaPr3AO_9ug1pD3NrzejBbZP2zUOKMYqwT7OFOWcKtTTrxL0lkGEpd0R9LTqm8ITGYSeTW9mI7ejxuNvp9i7B7MPMY-1vz7q9A2daftknj3fJh1ZYksKOOFyeOY5RX_AjJBjZkR_yLAFO3zA95h8OG69mqUr_IJ4vmKo5r5hyS7coOJR4g1fXBPH3vY_95xGnBmiycOSRCJCWoBL-7G8zJ4pn7ALnfQurM68aL8sEl0Kl9p49igT7xBaUoRYdLe6c");'></div>
             </div>
         </header>
 
@@ -110,11 +129,8 @@
 
                 <!-- Services Section -->
                 <section class="mb-24" id="services">
-                    <h2 class="text-3xl font-bold tracking-tight text-center mb-4">Live Services</h2>
-                    <p id="lastChecked" class="text-[#a093c8] text-sm font-normal text-center mb-8">
-                        Checking service status...
-                    </p>
-                    
+                    <h2 class="text-3xl font-bold tracking-tight text-center mb-12">Live Services</h2>
+
                     <div id="servicesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         <!-- File Sharing Service -->
                         <a href="https://copyparty.ogthejoe.com" target="_blank" class="service-card flex flex-col items-center justify-center p-6 rounded-xl aspect-square group">
