@@ -18,7 +18,7 @@ class OgTheJoeHomepage {
                 displayName: 'Element Chat',
                 icon: 'chat',
                 description: 'Secure Matrix chat with end-to-end encryption.',
-                url: 'http://chat.ogthejoe.com',
+                url: 'https://chat.ogthejoe.com',
                 gradient: 'from-cyan-500 to-blue-600',
                 status: 'checking'
             },
@@ -26,7 +26,7 @@ class OgTheJoeHomepage {
                 displayName: 'Matrix Chat',
                 icon: 'chat',
                 description: 'Decentralized secure messaging server.',
-                url: 'http://matrix.ogthejoe.com',
+                url: 'https://matrix.ogthejoe.com',
                 gradient: 'from-cyan-500 to-blue-600',
                 status: 'checking'
             },
@@ -191,26 +191,53 @@ class OgTheJoeHomepage {
             wrapper.className = 'service-card-wrapper';
 
             const serviceCard = document.createElement('a');
-            serviceCard.href = service.url;
+            // Only allow http(s) hrefs - reject javascript:/data: etc.
+            serviceCard.href = this.safeUrl(service.url);
             serviceCard.target = '_blank';
+            serviceCard.rel = 'noopener noreferrer';
             serviceCard.className = 'service-card flex flex-col p-6 rounded-xl group';
 
+            // service.displayName and service.description originate from the n8n
+            // webhook (external data) and MUST be escaped to prevent stored/DOM XSS.
+            // service.gradient/icon are mapped to a fixed allowlist; statusBadge is
+            // built internally from constants, so both are trusted markup.
+            const esc = OgTheJoeHomepage.escapeHtml;
             serviceCard.innerHTML = `
                 <div class="flex items-start gap-4 mb-4">
-                    <div class="w-16 h-16 bg-gradient-to-br ${service.gradient} rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                        <span class="material-symbols-outlined text-3xl text-white">${service.icon}</span>
+                    <div class="w-16 h-16 bg-gradient-to-br ${esc(service.gradient)} rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined text-3xl text-white">${esc(service.icon)}</span>
                     </div>
                     <div class="flex-grow min-w-0">
-                        <h3 class="text-lg font-bold mb-2 truncate">${service.displayName}</h3>
+                        <h3 class="text-lg font-bold mb-2 truncate">${esc(service.displayName)}</h3>
                         ${service.statusBadge || ''}
                     </div>
                 </div>
-                <p class="text-[#a093c8] text-sm line-clamp-2">${service.description}</p>
+                <p class="text-[#a093c8] text-sm line-clamp-2">${esc(service.description)}</p>
             `;
 
             wrapper.appendChild(serviceCard);
             servicesGrid.appendChild(wrapper);
         });
+    }
+
+    // Escape HTML special characters so untrusted text cannot inject markup.
+    static escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"'`]/g, (ch) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;',
+            '"': '&quot;', "'": '&#39;', '`': '&#96;'
+        }[ch]));
+    }
+
+    // Return the URL only if it uses a safe http(s) scheme, else '#'.
+    safeUrl(url) {
+        try {
+            const parsed = new URL(url, window.location.origin);
+            return (parsed.protocol === 'https:' || parsed.protocol === 'http:')
+                ? parsed.href
+                : '#';
+        } catch {
+            return '#';
+        }
     }
 
     updateLastChecked() {
